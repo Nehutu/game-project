@@ -19,6 +19,7 @@ var config = {
 var player;
 var enemies;
 var enemy;
+var gameOver = false;
 
 var game = new Phaser.Game(config);
 
@@ -26,7 +27,9 @@ function preload() {
   this.load.image("wall", "assets/backwall.png");
   this.load.image("floor", "assets/floor.png");
   this.load.image("star", "assets/star.png");
+  this.load.image("ghost", "assets/ghost.png");
   this.load.image("ground", "assets/platform.png");
+  this.load.image("gate", "assets/gate.png");
 }
 
 function create() {
@@ -60,28 +63,43 @@ function create() {
 
   enemies = this.physics.add.group();
 
-  enemy = enemies.create(70, 70, "star");
+  enemy = enemies.create(100, 100, "ghost");
   enemy.setBounce(0.2);
   enemy.setCollideWorldBounds(true);
   enemy.body.setAllowGravity(false);
 
-  enemy1 = enemies.create(480, 480, "star");
+  enemy1 = enemies.create(480, 480, "ghost");
   enemy1.setBounce(0.2);
   enemy1.setCollideWorldBounds(true);
   enemy1.body.setAllowGravity(false);
 
-  enemy2 = enemies.create(1190, 390, "star");
+  enemy2 = enemies.create(580, 80, "ghost");
   enemy2.setBounce(0.2);
   enemy2.setCollideWorldBounds(true);
   enemy2.body.setAllowGravity(false);
+
+  enemy3 = enemies.create(900, 300, "ghost");
+  enemy3.setBounce(0.3);
+  enemy3.setCollideWorldBounds(true);
+  enemy3.body.setAllowGravity(false);
+
+  enemy4 = enemies.create(1160, 440, "ghost");
+  enemy4.setBounce(0.2);
+  enemy4.setCollideWorldBounds(true);
+  enemy4.body.setAllowGravity(false);
 
   cursors = this.input.keyboard.createCursorKeys();
 
   this.physics.add.collider(player, platforms);
   this.physics.add.collider(enemies, platforms);
+  this.physics.add.collider(player, enemies, playerDead, null, this);
 }
 
 function update() {
+  if (gameOver) {
+    return;
+  }
+
   if (cursors.left.isDown) {
     player.setVelocityX(-200);
   } else if (cursors.right.isDown) {
@@ -95,7 +113,7 @@ function update() {
   }
 
   if (
-    150 >
+    250 >
     Phaser.Math.Distance.Between(
       player.body.x,
       player.body.y,
@@ -103,21 +121,35 @@ function update() {
       enemy.body.y
     )
   ) {
+    enemyHunt();
+  }
+  function enemyHunt() {
     if (player.x >= enemy.x) {
-      enemy.setVelocityX(20);
+      enemy.setVelocityX(50);
     } else if (player.x < enemy.x) {
-      enemy.setVelocityX(-20);
+      enemy.setVelocityX(-50);
     }
 
     if (player.y >= enemy.y) {
-      enemy.setVelocityY(20);
+      enemy.setVelocityY(50);
     } else if (player.y < enemy.y) {
-      enemy.setVelocityY(-20);
+      enemy.setVelocityY(-50);
+    }
+    if (
+      1 >
+      Phaser.Math.Distance.Between(
+        player.body.x,
+        player.body.y,
+        enemy.body.x,
+        enemy.body.y
+      )
+    ) {
+      playerDead();
     }
   }
 
   if (
-    150 >
+    250 >
     Phaser.Math.Distance.Between(
       player.body.x,
       player.body.y,
@@ -126,20 +158,20 @@ function update() {
     )
   ) {
     if (player.x >= enemy1.x) {
-      enemy1.setVelocityX(20);
+      enemy1.setVelocityX(50);
     } else if (player.x < enemy1.x) {
-      enemy1.setVelocityX(-20);
+      enemy1.setVelocityX(-50);
     }
 
     if (player.y >= enemy1.y) {
-      enemy1.setVelocityY(20);
+      enemy1.setVelocityY(50);
     } else if (player.y < enemy1.y) {
-      enemy1.setVelocityY(-20);
+      enemy1.setVelocityY(-50);
     }
   }
 
   if (
-    150 >
+    250 >
     Phaser.Math.Distance.Between(
       player.body.x,
       player.body.y,
@@ -148,15 +180,66 @@ function update() {
     )
   ) {
     if (player.x >= enemy2.x) {
-      enemy2.setVelocityX(20);
+      enemy2.setVelocityX(50);
     } else if (player.x < enemy2.x) {
-      enemy2.setVelocityX(-20);
+      enemy2.setVelocityX(-50);
     }
 
     if (player.y >= enemy2.y) {
-      enemy2.setVelocityY(20);
+      enemy2.setVelocityY(50);
     } else if (player.y < enemy2.y) {
-      enemy2.setVelocityY(-20);
+      enemy2.setVelocityY(-50);
     }
   }
+
+  if (
+    250 >
+    Phaser.Math.Distance.Between(
+      player.body.x,
+      player.body.y,
+      enemy3.body.x,
+      enemy3.body.y
+    )
+  ) {
+    if (player.x >= enemy3.x) {
+      enemy3.setVelocityX(50);
+    } else if (player.x < enemy3.x) {
+      enemy3.setVelocityX(-50);
+    }
+
+    if (player.y >= enemy3.y) {
+      enemy3.setVelocityY(50);
+    } else if (player.y < enemy3.y) {
+      enemy3.setVelocityY(-50);
+    }
+  }
+
+  if (
+    250 >
+    Phaser.Math.Distance.Between(
+      player.body.x,
+      player.body.y,
+      enemy4.body.x,
+      enemy4.body.y
+    )
+  ) {
+    if (player.x >= enemy4.x) {
+      enemy4.setVelocityX(50);
+    } else if (player.x < enemy4.x) {
+      enemy4.setVelocityX(-50);
+    }
+
+    if (player.y >= enemy4.y) {
+      enemy4.setVelocityY(50);
+    } else if (player.y < enemy4.y) {
+      enemy4.setVelocityY(-50);
+    }
+  }
+}
+function playerDead() {
+  this.physics.pause();
+
+  player.setTint(0xff0000);
+
+  gameOver = true;
 }
