@@ -58,41 +58,42 @@ function create() {
 
   player = this.physics.add.sprite(70, 590, "star");
 
-  player.setBounce(0);
+  player.setBounce(0.2);
   player.setCollideWorldBounds(true);
 
   enemies = this.physics.add.group();
 
   enemy = enemies.create(100, 100, "ghost");
-  enemy.setBounce(0.2);
   enemy.setCollideWorldBounds(true);
   enemy.body.setAllowGravity(false);
 
   enemy1 = enemies.create(480, 480, "ghost");
-  enemy1.setBounce(0.2);
   enemy1.setCollideWorldBounds(true);
   enemy1.body.setAllowGravity(false);
 
   enemy2 = enemies.create(580, 80, "ghost");
-  enemy2.setBounce(0.2);
   enemy2.setCollideWorldBounds(true);
   enemy2.body.setAllowGravity(false);
 
   enemy3 = enemies.create(900, 300, "ghost");
-  enemy3.setBounce(0.3);
   enemy3.setCollideWorldBounds(true);
   enemy3.body.setAllowGravity(false);
 
   enemy4 = enemies.create(1160, 440, "ghost");
-  enemy4.setBounce(0.2);
   enemy4.setCollideWorldBounds(true);
   enemy4.body.setAllowGravity(false);
+
+  gate = this.physics.add.sprite(1260, 76, "gate");
+  gate.setCollideWorldBounds(true);
+  gate.body.setAllowGravity(false);
 
   cursors = this.input.keyboard.createCursorKeys();
 
   this.physics.add.collider(player, platforms);
   this.physics.add.collider(enemies, platforms);
+  this.physics.add.collider(gate, platforms);
   this.physics.add.collider(player, enemies, playerDead, null, this);
+  this.physics.add.overlap(player, gate, playerLives, null, this);
 }
 
 function update() {
@@ -134,17 +135,6 @@ function update() {
       enemy.setVelocityY(50);
     } else if (player.y < enemy.y) {
       enemy.setVelocityY(-50);
-    }
-    if (
-      1 >
-      Phaser.Math.Distance.Between(
-        player.body.x,
-        player.body.y,
-        enemy.body.x,
-        enemy.body.y
-      )
-    ) {
-      playerDead();
     }
   }
 
@@ -235,11 +225,32 @@ function update() {
       enemy4.setVelocityY(-50);
     }
   }
+
+  // if (
+  //   5 >
+  //   Phaser.Math.Distance.Between(
+  //     player.body.x,
+  //     player.body.y,
+  //     gate.x,
+  //     gate.y
+  //   )
+  // ) {
+  //   playerLives();
+  // }
 }
+
 function playerDead() {
   this.physics.pause();
 
   player.setTint(0xff0000);
+
+  gameOver = true;
+}
+
+function playerLives() {
+  this.physics.pause();
+
+  player.setTint(0xffff);
 
   gameOver = true;
 }
