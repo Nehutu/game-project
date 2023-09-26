@@ -17,6 +17,7 @@ var config = {
 };
 
 var player;
+var enemy;
 
 var game = new Phaser.Game(config);
 
@@ -56,9 +57,16 @@ function create() {
   player.setBounce(0);
   player.setCollideWorldBounds(true);
 
+  enemy = this.physics.add.sprite(70, 70, "star");
+
+  enemy.setBounce(0.2);
+  enemy.setCollideWorldBounds(true);
+  enemy.body.setAllowGravity(false);
+
   cursors = this.input.keyboard.createCursorKeys();
 
   this.physics.add.collider(player, platforms);
+  this.physics.add.collider(enemy, platforms);
 }
 
 function update() {
@@ -72,5 +80,17 @@ function update() {
 
   if (cursors.up.isDown && player.body.touching.down) {
     player.setVelocityY(-660);
+  }
+
+  if (player.x >= enemy.x) {
+    enemy.setVelocityX(20);
+  } else if (player.x < enemy.x) {
+    enemy.setVelocityX(-20);
+  }
+
+  if (player.y >= enemy.y) {
+    enemy.setVelocityY(20);
+  } else if (player.y < enemy.y) {
+    enemy.setVelocityY(-20);
   }
 }
